@@ -36,8 +36,10 @@ drop table if exists skills;
 create table skills(
     id int NOT NULL,
     name varchar(255) NOT NULL,
-    description varchar(255) NOT NULL DEFAULT '(default description)',
+    description varchar(4096) NOT NULL DEFAULT '(default description)',
     tag varchar(255) NOT NULL,
+    url varchar(255) DEFAULT NULL,
+    time_commitment int DEFAULT NULL,
     primary key(id)
 );
 
@@ -46,14 +48,15 @@ create table skills(
 # Populates the skills table with eight skills, their tag fields must exactly contain “Skill 1”, “Skill 2”, etc.
 # You can assign skill names.  Please be creative!
 
-#Change these skills
 insert into skills (id, name, tag) values
-    (1, 'rock climbing', 'Skill 1'),
-    (2, 'mind reading', 'Skill 2'),
-    (3, 'cooking', 'Skill 3'),
-    (4, 'coding with python', 'Skill 4'),
-    (5, 'break dancing', 'Skill 5'),
-    (6, 'drawing', 'Skill 6');
+    (1, 'hotdog eating', 'Skill 1'),
+    (2, 'phonebook ripping', 'Skill 2'),
+    (3, 'bowling', 'Skill 3'),
+    (4, 'time management', 'Skill 4'),
+    (5, 'speed reading', 'Skill 5'),
+    (6, 'scent tracking', 'Skill 6'),
+    (7, 'high vertical jump', 'Skill 7'),
+    (8, 'racing', 'Skill 8');
 
 
 # Section 4
@@ -63,8 +66,15 @@ insert into skills (id, name, tag) values
 
 drop table if exists people;
 CREATE TABLE people (
-    people_id int,
+    people_id int NOT NULL,
     people_last_name varchar(256) NOT NULL,
+    people_first_name varchar(256) DEFAULT NULL,
+    email varchar(256) DEFAULT NULL,
+    linkedin_url varchar(256) DEFAULT NULL,
+    headshot_url varchar(256) DEFAULT NULL,
+    discord_handle varchar(256) DEFAULT NULL,
+    brief_bio varchar(4096) DEFAULT NULL,
+    date_joined date NOT NULL DEFAULT (CURRENT_DATE),
     PRIMARY KEY (people_id)
 );
 
@@ -177,20 +187,39 @@ group BY
 # Create roles( id, name, sort_priority )
 # sort_priority is an integer and is used to provide an order for sorting roles
 
-
+create table roles(
+    role_id int,
+    name varchar(256),
+    sort_priority int
+);
 
 # Section 9
 # Populate roles
 # Designer, Developer, Recruit, Team Lead, Boss, Mentor
 # Sort priority is assigned numerically in the order listed above (Designer=10, Developer=20, Recruit=30, etc.)
 
-
+insert into roles ( id, people_id, role_id, date_assigned ) values
+    (1, 'Designer', 10),
+    (2, 'Developer', 20),
+    (3, 'Recruit', 30),
+    (4, 'Team Lead', 40),
+    (5, 'Boss', 50),
+    (6, 'Mentor', 60);
 
 # Section 10
 # Create peopleroles( id, people_id, role_id, date_assigned )
 # None of the fields can be null.  ID can be auto_increment
 
-
+drop table if exists peopleroles;
+create table peopleroles (
+    id int auto_increment,
+    people_id int,
+    role_id int,
+    date_assigned date not null default current_date,
+    primary key (id),
+    foreign key (people_id) references people (people_id),
+    foreign key (role_id) references roles (role_id)
+);
 
 # Section 11
 # Populate peopleroles
@@ -205,3 +234,19 @@ group BY
 # Person 9 is Developer
 # Person 10 is Developer and Designer
 
+insert into peopleroles (people_id, role_id) values
+    (1, 2),
+    (2, 5),
+    (2, 6),
+    (3, 2),
+    (3, 4),
+    (4, 3),
+    (5, 3),
+    (6, 2),
+    (6, 1),
+    (7, 1),
+    (8, 1),
+    (8, 4),
+    (9, 2),
+    (10, 2),
+    (10, 1);
