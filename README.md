@@ -1,1 +1,6 @@
-# cmsc508-fa2023-hw7-template
+Project name: HW7 - Creating a resume database
+Author: Boden Kahn
+Last modified: 11/13/23
+Requirements: python, poetry, quarto, pyenv, pandas, sqlalchemy, dotenv, ipython, tabulate
+How to run: If the database isn't working properly, be sure to connect to the database through VScode, then run all of the sql in the hw7-ddl.sql file. Then, using the quarto extension on VSCode render the hw7.qmd file. Finally, view the generated HTML file.
+Description: The hw7-ddl.sql file contains the sql code necessary to create the database. It drops any existing tables, creates the skills table, populates it, creates the people table, populates it, creates the peopleskills table, populates it, creates the roles table, populates it, then creates the peopleroles table and finally populates it. The hw7.qmd file contains the overviews, descriptions, diagrams, and examples necessary to design and display the database. Below that sample queries can be found which include the sql code that was ran, as well as the result returned. At the very end of the file is my reflection on the project.
