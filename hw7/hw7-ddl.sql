@@ -66,16 +66,16 @@ insert into skills (id, name, tag) values
 
 drop table if exists people;
 CREATE TABLE people (
-    people_id int NOT NULL,
-    people_last_name varchar(256) NOT NULL,
-    people_first_name varchar(256) DEFAULT NULL,
+    id int NOT NULL,
+    last_name varchar(256) NOT NULL,
+    first_name varchar(256) DEFAULT NULL,
     email varchar(256) DEFAULT NULL,
     linkedin_url varchar(256) DEFAULT NULL,
     headshot_url varchar(256) DEFAULT NULL,
     discord_handle varchar(256) DEFAULT NULL,
     brief_bio varchar(4096) DEFAULT NULL,
     date_joined date NOT NULL DEFAULT (CURRENT_DATE),
-    PRIMARY KEY (people_id)
+    PRIMARY KEY (id)
 );
 
 # Section 5
@@ -83,13 +83,17 @@ CREATE TABLE people (
 # Their last names must exactly be “Person 1”, “Person 2”, etc.
 # Other fields are for you to assign.
 
-insert into people (people_id,people_last_name) values 
-    (1,'Person 1'),
-    (2,'Person 2'),
-    (3,'Person 3'),
-    (4,'Person 4'),
-    (5,'Person 5'),
-    (6,'Person 6');
+insert into people (id, last_name, email) values 
+    (1,'Person 1', 'Person_1@gmail.com'),
+    (2,'Person 2', 'Person_2@gmail.com'),
+    (3,'Person 3', 'Person_3@gmail.com'),
+    (4,'Person 4', 'Person_4@gmail.com'),
+    (5,'Person 5', 'Person_5@gmail.com'),
+    (6,'Person 6', 'Person_6@gmail.com'),
+    (7,'Person 7', 'Person_7@gmail.com'),
+    (8,'Person 8', 'Person_8@gmail.com'),
+    (9,'Person 9', 'Person_9@gmail.com'),
+    (10,'Person 10', 'Person_10@gmail.com');
 
 # Section 6
 # Create peopleskills( id, skills_id, people_id, date_acquired )
@@ -103,7 +107,7 @@ create table peopleskills (
     date_acquired date default (current_date),
     primary key (id),
     foreign key (skills_id) references skills (id) on delete cascade,
-    foreign key (people_id) references people (people_id),
+    foreign key (people_id) references people (id) on delete cascade,
     unique (skills_id, people_id)
 );
 
@@ -153,32 +157,32 @@ select * from peopleskills;
 select count(*) from peopleskills;
 
 SELECT
-    people_last_name,
+    last_name,
     name,
     tag
 from
     peopleskills a
-    inner join people b on (a.people_id = b.people_id)
-    inner join skills c on (a.skills_id = c.id)
+    inner join people b on (a.id = b.id)
+    inner join skills c on (a.id = c.id)
     order BY
         name,
-        people_last_name;
+        last_name;
 
 SELECT
-    people_last_name
+    last_name
 from
     people a
-        left join peopleskills b on (a.people_id = b.people_id)
+        left join peopleskills b on (a.id = b.id)
 Where
-    b.people_id is NULL;
+    b.id is NULL;
 
 SELECT
     name,
     count(*)
 from
     peopleskills a
-    inner join people b on (a.people_id = b.people_id)
-    inner join skills c on (a.skills_id = c.id)
+    inner join people b on (a.id = b.id)
+    inner join skills c on (a.id = c.id)
 group BY
     name;
 
@@ -187,10 +191,12 @@ group BY
 # Create roles( id, name, sort_priority )
 # sort_priority is an integer and is used to provide an order for sorting roles
 
+DROP TABLE IF EXISTS roles;
 create table roles(
-    role_id int,
+    id int,
     name varchar(256),
-    sort_priority int
+    sort_priority int,
+    primary key (id)
 );
 
 # Section 9
@@ -198,28 +204,33 @@ create table roles(
 # Designer, Developer, Recruit, Team Lead, Boss, Mentor
 # Sort priority is assigned numerically in the order listed above (Designer=10, Developer=20, Recruit=30, etc.)
 
-insert into roles ( id, people_id, role_id, date_assigned ) values
+insert into roles ( id, name, sort_priority) values
     (1, 'Designer', 10),
     (2, 'Developer', 20),
     (3, 'Recruit', 30),
     (4, 'Team Lead', 40),
     (5, 'Boss', 50),
     (6, 'Mentor', 60);
+    
+select * from roles;
 
 # Section 10
 # Create peopleroles( id, people_id, role_id, date_assigned )
 # None of the fields can be null.  ID can be auto_increment
 
-drop table if exists peopleroles;
+DROP TABLE IF EXISTS peopleroles;
 create table peopleroles (
     id int auto_increment,
-    people_id int,
-    role_id int,
-    date_assigned date not null default current_date,
+    people_id int NOT NULL,
+    role_id int NOT NULL,
+    date_role_acquired date NOT NULL DEFAULT (current_date),
     primary key (id),
-    foreign key (people_id) references people (people_id),
-    foreign key (role_id) references roles (role_id)
+    foreign key (people_id) references people (id) on delete cascade,
+    foreign key (role_id) references roles (id) on delete cascade,
+    unique (people_id, role_id)
 );
+
+
 
 # Section 11
 # Populate peopleroles
@@ -250,3 +261,5 @@ insert into peopleroles (people_id, role_id) values
     (9, 2),
     (10, 2),
     (10, 1);
+
+select * from peopleroles;
